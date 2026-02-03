@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Prompt Master Enterprise - Arquitetura de Software via IA" />
+  <title>Prompt Master | Enterprise Platform</title>
+
+  <!-- Preconnects for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#020202', // Titanium Black
+            surface: '#0A0A0A',    // Flat Surface
+            surfaceHover: '#111111',
+            border: '#1A1A1A',
+            primary: '#10FB97',    // [EMERALD SPARK]
+            primaryHover: '#0DE688',
+            secondary: '#8E9196',  // Steel Gray
+            success: '#10FB97',
+            danger: '#FF3B3B',
+            background: '#050505',
+            surface: '#0A0A0C',
+            primary: '#6D28D9', // Deep Purple (Violet 700)
+            secondary: '#94A3B8',
+            accent: '#4C1D95',
+            border: '#1E1B4B', // Dark Indigo Border
+            success: '#10B981',
+            warning: '#F59E0B',
+            danger: '#EF4444'
+          },
+          fontFamily: {
+            display: ['"Inter"', 'sans-serif'],
+            sans: ['"Inter"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          boxShadow: {
+            'glow': '0 0 40px -10px rgba(16, 251, 151, 0.2)',
+            'glass': '0 0 0 1px rgba(255, 255, 255, 0.05)',
+            'neon': '0 0 15px rgba(16, 251, 151, 0.4)',
+          },
+          borderRadius: {
+            'pm': '8px'
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s ease-out',
+            'slide-up': 'slideUp 0.6s cubic-bezier(0.2, 1, 0.2, 1)',
+            'float': 'float 5s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    :root {
+      --bg-color: #050505;
+      --text-primary: #FFFFFF;
+      --text-secondary: #94A3B8;
+    }
+
+    * {
+      cursor: default;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Improved Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #050505;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1E1B4B;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6D28D9;
+    }
+
+    .shadow-pm {
+      box-shadow: 0 4px 20px -5px rgba(109, 40, 217, 0.2);
+    }
+
+    .glass {
+      background: rgba(10, 10, 12, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(109, 40, 217, 0.1);
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <!-- Grain Overlay -->
+  <div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] mix-blend-overlay"
+    style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');">
+  </div>
+
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

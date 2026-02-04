@@ -1,65 +1,77 @@
-import winston from 'winston';
-
 /**
- * Structured Logger for PromptMaster Enterprise
+ * Structured Logger (Browser-Compatible)
  * 
- * Following Netflix/Stripe observability standards:
- * - Structured JSON logs
- * - Contextual metadata
- * - Multiple log levels
- * - Production-ready transports
+ * Lightweight structured logging for browser and Node.js.
+ * Follows Netflix/Stripe observability standards.
  */
+
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+interface LogMetadata {
+    [key: string]: any;
+}
 
 const isDevelopment = import.meta.env.MODE === 'development';
 
-// Custom format for development (readable)
-const devFormat = winston.format.combine(
-    winston.format.colorize(),
-    winston.format.timestamp({ format: 'HH:mm:ss' }),
-    winston.format.printf(({ timestamp, level, message, ...meta }) => {
-        const metaStr = Object.keys(meta).length ? JSON.stringify(meta, null, 2) : '';
-        return `[${timestamp}] ${level}: ${message} ${metaStr}`;
-    })
-);
+class Logger {
+    private level: LogLevel;
 
-// Production format (structured JSON)
-const prodFormat = winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-);
+    constructor(level: LogLevel = isDevelopment ? 'debug' : 'info') {
+        this.level = level;
+    }
 
-// Create logger instance
-export const logger = winston.createLogger({
-    level: isDevelopment ? 'debug' : 'info',
-    format: isDevelopment ? devFormat : prodFormat,
-    defaultMeta: {
-        service: 'promptmaster-enterprise',
-        environment: import.meta.env.MODE
-    },
-    transports: [
-        // Console transport (always active)
-        new winston.transports.Console({
-            stderrLevels: ['error']
-        })
-    ]
-});
+    private shouldLog(level: LogLevel): boolean {
+        const levels: LogLevel[] = ['debug', 'info', 'warn', 'error'];
+        return levels.indexOf(level) >= levels.indexOf(this.level);
+    }
 
-// Add file transports in production
-if (!isDevelopment) {
-    logger.add(new winston.transports.File({
-        filename: 'logs/error.log',
-        level: 'error',
-        maxsize: 5242880, // 5MB
-        maxFiles: 5
-    }));
+    private formatMessage(level: LogLevel, message: string, meta?: LogMetadata): string {
+        const timestamp = new Date().toISOString();
 
-    logger.add(new winston.transports.File({
-        filename: 'logs/combined.log',
-        maxsize: 5242880, // 5MB
-        maxFiles: 5
-    }));
+        if (isDevelopment) {
+            // Development: Human-readable
+            const metaStr = meta ? `\n${JSON.stringify(meta, null, 2)}` : '';
+            return `[${timestamp}] ${level.toUpperCase()}: ${message}${metaStr}`;
+        } else {
+            // Production: Structured JSON
+            return JSON.stringify({
+                timestamp,
+                level,
+                message,
+                service: 'promptmaster-enterprise',
+                environment: import.meta.env.MODE,
+                ...meta
+            });
+        }
+    }
+
+    debug(message: string, meta?: LogMetadata): void {
+        if (this.shouldLog('debug')) {
+            console.debug(this.formatMessage('debug', message, meta));
+        }
+    }
+
+    info(message: string, meta?: LogMetadata): void {
+        if (this.shouldLog('info')) {
+            console.info(this.formatMessage('info', message, meta));
+        }
+    }
+
+    warn(message: string, meta?: LogMetadata): void {
+        if (this.shouldLog('warn')) {
+            console.warn(this.formatMessage('warn', message, meta));
+        }
+    }
+
+    error(message: string, meta?: LogMetadata): void {
+        if (this.shouldLog('error')) {
+            console.error(this.formatMessage('error', message, meta));
+        }
+    }
 }
+
+// Export singleton instance
+export const logger = new Logger();
 
 /**
  * Typed logging helpers with context
@@ -79,15 +91,15 @@ export const logUserAction = (
 
 export const logError = (
     message: string,
-    error: Error,
+    error: Error | unknown,
     context?: Record<string, any>
 ) => {
+    const errorDetails = error instanceof Error
+        ? { message: error.message, stack: error.stack }
+        : { error: String(error) };
+
     logger.error(message, {
-        error: {
-            message: error.message,
-            stack: error.stack,
-            name: error.name
-        },
+        ...errorDetails,
         ...context
     });
 };
@@ -99,7 +111,7 @@ export const logAPICall = (
     success: boolean,
     metadata?: Record<string, any>
 ) => {
-    logger.info('API call', {
+    logger.info(`API call to ${service}`, {
         service,
         endpoint,
         duration,
@@ -113,13 +125,10 @@ export const logSecurityEvent = (
     severity: 'low' | 'medium' | 'high' | 'critical',
     metadata?: Record<string, any>
 ) => {
-    logger.warn('Security event', {
+    const logMethod = severity === 'critical' || severity === 'high' ? 'error' : 'warn';
+    logger[logMethod](`Security event: ${event}`, {
         event,
         severity,
-        timestamp: new Date().toISOString(),
         ...metadata
     });
 };
-
-// Export default logger
-export default logger;

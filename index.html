@@ -23,6 +23,17 @@
 
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
+
+  <!-- Error Fallback -->
+  <script>
+    window.addEventListener('error', function (e) {
+      console.error('Global error:', e.error);
+      const root = document.getElementById('root');
+      if (root && !root.innerHTML) {
+        root.innerHTML = '<div style="color: white; padding: 20px; font-family: monospace;">Error loading application. Check console for details.</div>';
+      }
+    });
+  </script>
 </body>
 
 </html>

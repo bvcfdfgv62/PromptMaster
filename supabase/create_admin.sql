@@ -3,4 +3,4 @@
 
 UPDATE public.users 
 SET role = 'ADMIN', credits = 999999
-WHERE email = 'marina@gmail.com';
+WHERE email = 'marinaaraujo409@gmail.com';

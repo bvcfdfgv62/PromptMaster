@@ -6,23 +6,15 @@ export const auth = {
         const { data: authData, error: authError } = await supabase!.auth.signUp({
             email,
             password,
+            options: {
+                data: {
+                    full_name: name,
+                }
+            }
         });
 
         if (authError) throw authError;
         if (!authData.user) throw new Error("Falha ao criar usuário.");
-
-        // O trigger no banco poderia fazer isso, mas garantimos aqui por segurança
-        const { error: profileError } = await supabase!
-            .from('users')
-            .insert({
-                id: authData.user.id,
-                email,
-                name,
-                credits: 10,
-                role: 'USER'
-            });
-
-        if (profileError) throw profileError;
 
         return authData.user;
     },

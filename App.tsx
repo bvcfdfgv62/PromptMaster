@@ -68,14 +68,14 @@ const AppContent: React.FC = () => {
         <div className="relative">
           <div className="w-24 h-24 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <Command className="text-primary animate-pulse" size={32} />
+            <span className="font-bold text-2xl text-white tracking-tight">Panis<span className="text-primary">Master</span></span>
           </div>
         </div>
         <div className="mt-12 text-center">
-          <h2 className="text-white font-bold text-2xl tracking-tight mb-3">Inicializando_Sistema...</h2>
+          <h2 className="text-white font-bold text-2xl tracking-tight mb-3">Sincronizando_Dados...</h2>
           <div className="flex items-center gap-3 text-secondary font-mono text-[10px] uppercase tracking-[0.4em] justify-center">
             <div className="w-1 h-1 bg-primary rounded-full animate-ping"></div>
-            {isCloudActive ? 'SAAS_REMOTE_NODE: CONNECTED' : 'LOCAL_STORAGE_NODE: READY'}
+            {isCloudActive ? 'NÚCLEO_SAAS: CONECTADO' : 'NÚCLEO_LOCAL: PRONTO'}
           </div>
         </div>
       </div>

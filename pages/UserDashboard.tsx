@@ -101,7 +101,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ currentUser, onLog
         setGeneratedPrompt('');
 
         try {
-            const result = await generateExpertPrompt(promptType, description);
+            const result = await generateExpertPrompt(promptType, description, currentUser.id);
             setGeneratedPrompt(result);
 
             const updatedUser = await db.updateUserCredits(currentUser.id, -1);

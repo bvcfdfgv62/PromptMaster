@@ -1,11 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 import { PromptType } from "../types";
+import { PromptGenerationSchema } from "./validation";
+import { rateLimiter } from "./rateLimiter";
+import { logger, logAPICall, logError } from "./logger";
 
 // Inicialização segura do cliente API
 const initAIClient = () => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    console.warn("VITE_GEMINI_API_KEY não encontrada. As gerações falharão.");
+    logger.warn("VITE_GEMINI_API_KEY não encontrada. As gerações falharão.");
   }
   return new GoogleGenAI({ apiKey: apiKey || "" });
 };
@@ -24,11 +27,11 @@ Você OPERA COMO UM CONSELHO TÉCNICO SUPREMO.
 
 0️⃣ REGRA ZERO (VERDADE FUNDAMENTAL)
 
-Qualquer sistema feio, genérico, frágil, confuso ou “ok” é CONSIDERADO FALHA TOTAL.
+Qualquer sistema feio, genérico, frágil, confuso ou "ok" é CONSIDERADO FALHA TOTAL.
 
-“Funciona” não é critério.
-“Depois melhora” é proibido.
-“MVP feio” não existe.
+"Funciona" não é critério.
+"Depois melhora" é proibido.
+"MVP feio" não existe.
 
 1️⃣ IDENTIDADE DA IA (MODO CONSELHO SUPREMO)
 
@@ -111,7 +114,7 @@ Nada feio é aceitável
 
 Nada genérico é aceitável
 
-Nada “default” é aceitável
+Nada "default" é aceitável
 
 Nada confuso é aceitável
 
@@ -143,7 +146,7 @@ Tome decisões explícitas
 
 Documente escolhas
 
-Nunca “assuma silenciosamente”
+Nunca "assuma silenciosamente"
 
 Se algo estiver mal definido:
 👉 PARE E DECLARE O PROBLEMA
@@ -263,7 +266,7 @@ O sistema DEVE GERAR funcionalidades de nível alto, quando aplicáveis:
 
 🔐 Autenticação com RBAC
 
-🧑🤝🧑 Multi-usuário
+🧑‍🤝‍🧑 Multi-usuário
 
 🏢 Multi-tenant
 
@@ -344,7 +347,7 @@ Reprovação → voltar para a fase correta
 
 Reincidência → resposta curta, direta, sem código
 
-5️⃣ DEFINIÇÃO OBJETIVA DE “FEIO” (PROIBIDO)
+5️⃣ DEFINIÇÃO OBJETIVA DE "FEIO" (PROIBIDO)
 
 Reprovar automaticamente se existir:
 
@@ -378,7 +381,7 @@ arquivos > 300 linhas
 
 lógica de negócio em UI
 
-endpoints que fazem “tudo”
+endpoints que fazem "tudo"
 
 abstração preguiçosa
 
@@ -426,16 +429,39 @@ Se o pedido do usuário gerar algo fraco:
 
 export const generateExpertPrompt = async (
   type: PromptType,
-  description: string
+  description: string,
+  userId: string
 ): Promise<string> => {
+  // Validation
+  const validated = PromptGenerationSchema.parse({ type, description, userId });
+
+  // Rate limiting
+  if (!rateLimiter.checkLimit(validated.userId)) {
+    const resetTime = rateLimiter.getResetTime(validated.userId);
+    logger.warn("Rate limit exceeded", {
+      userId: validated.userId,
+      resetTime
+    });
+    throw new Error(
+      `Rate limit exceeded. Try again in ${resetTime} seconds.`
+    );
+  }
+
   const modelName = "gemini-3-flash-preview";
+  const startTime = Date.now();
 
   try {
+    logger.info("Generating expert prompt", {
+      userId: validated.userId,
+      type: validated.type,
+      descriptionLength: validated.description.length
+    });
+
     const response = await ai.models.generateContent({
       model: modelName,
       contents: `INPUT DE CONTEXTO:
-Tipo de Sistema: ${type}
-Descrição e Objetivos: "${description}"
+Tipo de Sistema: ${validated.type}
+Descrição e Objetivos: "${validated.description}"
 
 AÇÃO:
 Atue como o CONSELHO TÉCNICO SUPREMO sob o protocolo PROMPT-MÃE ABSOLUTO.
@@ -449,10 +475,34 @@ O resultado deve ser um documento de engenharia pronto para produção.`,
       }
     });
 
+    const duration = Date.now() - startTime;
+    const outputLength = response.text?.length || 0;
+
+    logAPICall("gemini", modelName, duration, true, {
+      userId: validated.userId,
+      type: validated.type,
+      outputLength
+    });
+
+    logger.info("Expert prompt generated successfully", {
+      userId: validated.userId,
+      duration,
+      outputLength
+    });
 
     return response.text || "O sistema gerou uma resposta vazia. Por favor, tente novamente.";
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
+    const duration = Date.now() - startTime;
+
+    logAPICall("gemini", modelName, duration, false, {
+      userId: validated.userId,
+      error: error.message
+    });
+
+    logError("Gemini API Error", error, {
+      userId: validated.userId,
+      type: validated.type
+    });
 
     // Tratamento básico de erro para feedback ao usuário
     if (error.message?.includes("API_KEY")) {

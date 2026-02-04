@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db } from '../services/db';
+import { auth } from '../services/auth';
 import { User } from '../types';
 import { Button, Input, useToast, Card } from '../components/UI';
 import { Command, Mail, Lock, User as UserIcon, Shield, CheckCircle } from 'lucide-react';
@@ -22,16 +22,20 @@ export const Register: React.FC<RegisterProps> = ({ onLogin, onNavigateLogin }) 
     setIsLoading(true);
 
     try {
-      const newUser = await db.createUser({ name, email, password });
+      await auth.signUp(email, password, name);
+      const user = await auth.getCurrentUser();
+
+      if (!user) throw new Error("Erro ao criar perfil.");
+
       setSuccess(true);
       addToast('Conta criada com sucesso!', 'success');
 
       // Allow user to see the success state briefly before redirect
       setTimeout(() => {
-        onLogin(newUser);
+        onLogin(user);
       }, 2000);
     } catch (err: any) {
-      addToast(err.message, 'error');
+      addToast(err.message || 'Erro ao criar conta.', 'error');
       setIsLoading(false);
     }
   };

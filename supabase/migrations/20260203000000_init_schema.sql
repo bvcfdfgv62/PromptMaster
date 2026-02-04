@@ -1,11 +1,11 @@
 -- PROMPT MASTER ENTERPRISE - SQL SCHEMA (BIG TECH READY)
 
 -- 1. Create Users Table
+-- 1. Create Users Table (Profile)
 CREATE TABLE IF NOT EXISTS public.users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     email TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
-    password_hash TEXT NOT NULL, -- In a real system, Supabase Auth handles this, but we keep it for custom logic
     credits INTEGER DEFAULT 10 CHECK (credits >= 0),
     role TEXT DEFAULT 'USER' CHECK (role IN ('USER', 'ADMIN')),
     created_at TIMESTAMPTZ DEFAULT now(),

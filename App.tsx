@@ -28,13 +28,8 @@ const AppContent: React.FC = () => {
           const freshData = await db.getUserByEmail(parsed.email);
 
           if (freshData) {
-            // Verify password hasn't changed (simplified auth check)
-            if (freshData.password === parsed.password) {
-              setCurrentUser(freshData);
-              setCurrentView('DASHBOARD');
-            } else {
-              localStorage.removeItem('pm_session');
-            }
+            setCurrentUser(freshData);
+            setCurrentView('DASHBOARD');
           } else {
             localStorage.removeItem('pm_session');
           }

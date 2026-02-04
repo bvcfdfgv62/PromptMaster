@@ -2,9 +2,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  password: string; // Nota: Em produção real, senhas nunca trafegam em texto plano.
   credits: number;
   role: 'ADMIN' | 'USER';
+  created_at?: string;
 }
 
 export enum PromptType {
@@ -18,11 +18,11 @@ export enum PromptType {
 
 export interface PromptEntry {
   id: string;
-  userId: string;
+  user_id: string;
   type: PromptType;
-  description: string;
-  result: string;
-  timestamp: number;
+  prompt: string;
+  output: string;
+  timestamp: number | string;
 }
 
 // Interface para respostas da API (preparando para o Backend)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db } from '../services/db';
+import { auth } from '../services/auth';
 import { User } from '../types';
 import { Button, Input, useToast, Card } from '../components/UI';
 import { Command, Lock, User as UserIcon } from 'lucide-react';
@@ -20,17 +20,17 @@ export const Login: React.FC<LoginProps> = ({ onLogin, onNavigateRegister }) => 
     setIsLoading(true);
 
     try {
-      // Async call simulates real network request
-      const user = await db.getUserByEmail(email);
+      await auth.signIn(email, password);
+      const user = await auth.getCurrentUser();
 
-      if (!user || user.password !== password) {
-        throw new Error('Credenciais de acesso inválidas.');
+      if (!user) {
+        throw new Error('Falha ao recuperar perfil do usuário.');
       }
 
       addToast('Login realizado com sucesso', 'success');
       onLogin(user);
     } catch (err: any) {
-      addToast(err.message, 'error');
+      addToast(err.message || 'Erro ao autenticar.', 'error');
     } finally {
       setIsLoading(false);
     }

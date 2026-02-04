@@ -107,10 +107,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ currentUser, onLog
             const updatedUser = await db.updateUserCredits(currentUser.id, -1);
 
             const newHistoryEntry = await db.savePromptHistory({
-                userId: currentUser.id,
+                user_id: currentUser.id,
                 type: promptType,
-                description: description,
-                result: result
+                prompt: description,
+                output: result
             });
 
             onUpdateUser(updatedUser);
@@ -258,13 +258,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ currentUser, onLog
                                     <span className="px-3 py-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest border border-primary/20">{entry.type}</span>
                                     <span className="text-[10px] text-gray-600 font-mono uppercase tracking-wider">{new Date(entry.timestamp).toLocaleString('pt-BR')}</span>
                                 </div>
-                                <button onClick={() => { navigator.clipboard.writeText(entry.result); addToast("COPIADO PARA O CLIPE", "success") }} className="p-2 text-gray-700 hover:text-primary transition-colors">
+                                <button onClick={() => { navigator.clipboard.writeText(entry.output); addToast("COPIADO PARA O CLIPE", "success") }} className="p-2 text-gray-700 hover:text-primary transition-colors">
                                     <Copy size={16} />
                                 </button>
                             </div>
-                            <p className="text-gray-400 text-sm mb-6 line-clamp-2 pl-4 border-l border-border group-hover:border-primary/30 transition-colors italic">{entry.description}</p>
+                            <p className="text-gray-400 text-sm mb-6 line-clamp-2 pl-4 border-l border-border group-hover:border-primary/30 transition-colors italic">{entry.prompt}</p>
                             <div className="bg-background/60 p-5 border border-border group-hover:border-primary/10 transition-colors">
-                                <pre className="font-mono text-[11px] text-gray-700 line-clamp-3 overflow-hidden leading-relaxed">{entry.result}</pre>
+                                <pre className="font-mono text-[11px] text-gray-700 line-clamp-3 overflow-hidden leading-relaxed">{entry.output}</pre>
                             </div>
                         </div>
                     ))}

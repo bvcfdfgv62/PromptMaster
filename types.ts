@@ -9,11 +9,7 @@ export interface User {
 
 export enum PromptType {
   WEBSITE = 'Site',
-  SAAS = 'SaaS',
-  SALES_COPY = 'Copy de Vendas',
-  INSTAGRAM = 'Instagram',
-  CHATBOT = 'Chatbot',
-  OTHER = 'Outro'
+  SAAS = 'SaaS'
 }
 
 export interface PromptEntry {

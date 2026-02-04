@@ -68,7 +68,7 @@ const AppContent: React.FC = () => {
         <div className="relative">
           <div className="w-24 h-24 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-bold text-2xl text-white tracking-tight">Panis<span className="text-primary">Master</span></span>
+            <span className="font-bold text-2xl text-white tracking-tight">Prompt<span className="text-primary">Master</span></span>
           </div>
         </div>
         <div className="mt-12 text-center">

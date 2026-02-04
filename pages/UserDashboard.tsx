@@ -380,7 +380,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ currentUser, onLog
                 <div className="p-10 border-b border-white/5">
                     <div className="flex items-center gap-4 text-primary">
                         <Command size={28} />
-                        <span className="font-bold text-2xl text-white tracking-tight">Panis<span className="text-primary">Master</span></span>
+                        <span className="font-bold text-2xl text-white tracking-tight">Prompt<span className="text-primary">Master</span></span>
                     </div>
                     <span className="text-[10px] uppercase tracking-[0.3em] text-secondary font-bold ml-11 mt-2 block">Enterprise Management</span>
                 </div>
@@ -419,7 +419,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ currentUser, onLog
             <main className="flex-1 overflow-y-auto relative h-screen bg-dots-pattern">
                 {/* Mobile Header */}
                 <header className="lg:hidden border-b border-white/5 bg-surface/80 p-4 flex justify-between items-center sticky top-0 z-20 backdrop-blur-xl">
-                    <span className="font-display font-bold text-white text-xl">Panis<span className="text-primary">Master</span></span>
+                    <span className="font-display font-bold text-white text-xl">Prompt<span className="text-primary">Master</span></span>
                     <div className="flex items-center gap-4">
                         <div className="text-xs text-primary font-bold flex items-center gap-1 border border-primary/20 px-3 py-1 rounded-full bg-primary/10">
                             <Zap size={12} fill="currentColor" /> {currentUser.credits}
@@ -456,15 +456,21 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ currentUser, onLog
             </main>
 
             {/* Modals */}
-            <Modal isOpen={showNoCreditsModal} onClose={() => setShowNoCreditsModal(false)} title="Saldo de Créditos Esgotado">
+            <Modal isOpen={showNoCreditsModal} onClose={() => setShowNoCreditsModal(false)} title="Créditos esgotados 🚫">
                 <div className="text-center py-8">
                     <div className="w-24 h-24 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-8 text-danger border border-danger/20">
                         <Zap size={48} fill="currentColor" />
                     </div>
-                    <h3 className="text-3xl font-display font-bold text-white mb-4">Créditos Esgotados</h3>
-                    <p className="text-gray-400 mb-10 px-6 leading-relaxed">Seu saldo de créditos acabou. Para adquirir mais, entre em contato direto pelo WhatsApp abaixo:</p>
-                    <Button onClick={() => window.open('https://wa.me/5571988637705?text=Olá,%20gostaria%20de%20comprar%20mais%20créditos%20para%20continuar%20usando%20o%20sistema.', '_blank')} className="h-14 text-lg w-full">
-                        <MessageCircle className="fill-current" size={24} /> Comprar Créditos (WhatsApp)
+                    <h3 className="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tight">Créditos esgotados 🚫</h3>
+                    <p className="text-gray-400 mb-10 px-6 leading-relaxed">
+                        Seus créditos chegaram ao fim.<br />
+                        Para continuar usando o <strong>Prompt Master</strong> e liberar mais créditos, entre em contato pelo WhatsApp:
+                    </p>
+                    <div className="mb-10 text-primary font-mono text-xl font-bold tracking-widest">
+                        📱 (71) 99886-37705
+                    </div>
+                    <Button onClick={() => window.open('https://wa.me/55719988637705?text=Olá,%20meus%20créditos%20no%20Prompt%20Master%20esgotaram.%20Gostaria%20de%20ativar%20mais%20créditos.', '_blank')} className="h-14 text-lg w-full">
+                        <MessageCircle className="fill-current" size={24} /> Ativar Créditos (WhatsApp)
                     </Button>
                 </div>
             </Modal>

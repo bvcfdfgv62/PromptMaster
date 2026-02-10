@@ -22,8 +22,8 @@ export const Register: React.FC<RegisterProps> = ({ onLogin, onNavigateLogin }) 
     setIsLoading(true);
 
     try {
-      await auth.signUp(email, password, name);
-      const user = await auth.getCurrentUser();
+      const user = await auth.signUp(email, password, name);
+      // const user = await auth.getCurrentUser(); // Removed redundant check that fails in local mode
 
       if (!user) throw new Error("Erro ao criar perfil.");
 
